@@ -1,14 +1,56 @@
 plugins {
-    id 'java'
+    id 'java-library'
+    id 'maven-publish'
+    id "com.jfrog.bintray" version "1.8.4"
 }
 
 group 'net.slipp'
 version '0.1.0-SNAPSHOT'
 
 repositories {
+    maven {
+        url  "https://dl.bintray.com/develophil/lib-assertion"
+    }
     mavenCentral()
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+bintray {
+
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    pkg {
+        repo = 'lib-assertion'
+        name = 'lib-assertion'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/slipp-library/lib-assertion.git'
+        version {
+            name = '0.1.0'
+            desc = 'slipp-library'
+            released  = new Date()
+            vcsTag = '0.1.0'
+            attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin']
+        }
+    }
+}
+
+publishing {
+    publications {
+        MyPublication(MavenPublication) {
+            from components.java
+            groupId 'net.slipp'
+            artifactId 'lib-assertion'
+            version '0.1.0-SNAPSHOT'
+        }
+    }
+}
+
+task hello {
+    println('env : ' + System.getenv('BINTRAY_USER'))
+    println('env : ' + System.getenv('BINTRAY_KEY'))
+    println('prop : ' + System.getProperty('BINTRAY_USER'))
+    println('pprop : ' + project.getProperties()['BINTRAY_USER'])
 }
