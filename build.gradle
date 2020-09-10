@@ -5,12 +5,9 @@ plugins {
 }
 
 group 'net.slipp'
-version '0.1.0-SNAPSHOT'
+version '0.1.1-snapshot'
 
 repositories {
-    maven {
-        url  "https://dl.bintray.com/develophil/lib-assertion"
-    }
     mavenCentral()
 }
 
@@ -19,38 +16,39 @@ dependencies {
 }
 
 bintray {
-
     user = System.getenv('BINTRAY_USER')
     key = System.getenv('BINTRAY_KEY')
+    publications = ['MyPublication']
     pkg {
-        repo = 'lib-assertion'
-        name = 'lib-assertion'
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/slipp-library/lib-assertion.git'
+        repo = 'libraries'
+        name = 'assertions'
+        userOrg = 'slipp-projects'
+        vcsUrl = 'https://github.com/slipp-projects/assertions.git'
         version {
-            name = '0.1.0'
-            desc = 'slipp-library'
+            desc = 'slipp-assertion-library'
             released  = new Date()
-            vcsTag = '0.1.0'
-            attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin']
         }
     }
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier.set('sources')
+}
+
+task javadocJar(type: Jar) {
+    from javadoc
+    archiveClassifier.set('javadoc')
 }
 
 publishing {
     publications {
         MyPublication(MavenPublication) {
             from components.java
+            artifact sourcesJar
+            artifact javadocJar
             groupId 'net.slipp'
-            artifactId 'lib-assertion'
-            version '0.1.0-SNAPSHOT'
+            artifactId 'assertions'
         }
     }
-}
-
-task hello {
-    println('env : ' + System.getenv('BINTRAY_USER'))
-    println('env : ' + System.getenv('BINTRAY_KEY'))
-    println('prop : ' + System.getProperty('BINTRAY_USER'))
-    println('pprop : ' + project.getProperties()['BINTRAY_USER'])
 }
